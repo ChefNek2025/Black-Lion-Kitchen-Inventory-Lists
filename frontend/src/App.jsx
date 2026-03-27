@@ -33,7 +33,7 @@ const INIT_ITEMS = [
   { id:29, name:'Bell Peppers', cat:'Produce', qty:4, threshold:1, unit:'bags', notes:'' },
   { id:31, name:'Shredded Carrots', cat:'Produce', qty:2, threshold:1, unit:'bags', notes:'' },
   { id:32, name:'Red Cabbage', cat:'Produce', qty:2, threshold:1, unit:'heads', notes:'' },
-  { id:33, name:'Green Cabbage', cat:'Produce', qty:0, threshold:1, unit:'heads', notes:'' },
+  { id:33, name:'Green Cabbage', cat:'Produce', qty:2, threshold:1, unit:'heads', notes:'' },
   { id:34, name:'Celery', cat:'Produce', qty:2, threshold:1, unit:'bunches', notes:'' },
   { id:35, name:'Parsley', cat:'Produce', qty:2, threshold:1, unit:'bunches', notes:'' },
   { id:36, name:'Mint', cat:'Produce', qty:2, threshold:1, unit:'bunches', notes:'' },
