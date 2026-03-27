@@ -11,9 +11,7 @@ app.use(cors())
 app.use(express.json())
 
 // Desktop path
-const DESKTOP = path.join('C:\\Users\\Chef Nek\\Desktop')
-const EXCEL_FILE = path.join(DESKTOP, 'BlackLion-Inventory.xlsx')
-
+const EXCEL_FILE = path.join(__dirname, 'BlackLion-Inventory.xlsx')
 async function saveToExcel(timestamp, items) {
   const workbook = new ExcelJS.Workbook()
   let worksheet
