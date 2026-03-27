@@ -136,7 +136,7 @@ const [search, setSearch] = useState('')
     items: items.map(i => ({ ...i, status: getStatus(i) }))
   }
   try {
-    const res = await fetch('http://localhost:3001/checkin', {
+    const res = await fetch('https://black-lion-kitchen-inventory-lists.onrender.com/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
