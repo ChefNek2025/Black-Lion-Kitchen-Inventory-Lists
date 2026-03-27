@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as XLSX from 'xlsx'
+import XLSX from 'xlsx-js-style'
 import './App.css'
 
 const INIT_ITEMS = [
