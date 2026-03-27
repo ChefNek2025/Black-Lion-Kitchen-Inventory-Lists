@@ -88,6 +88,21 @@ function getStatus(item) {
   return 'ok'
 }
 
+const catColors = {
+  'Proteins': 'FCE4EC',
+  'Dairy':    'E3F2FD',
+  'Produce':  'E8F5E9',
+  'Grains':   'FFF8E1',
+  'Sauces':   'F3E5F5',
+  'Bakery':   'FBE9E7',
+}
+
+const statusColors = {
+  'ok':  { bg: 'E8F5E9', font: '2E7D32' },
+  'low': { bg: 'FFF8E1', font: 'F57C00' },
+  'out': { bg: 'FFEBEE', font: 'C62828' },
+}
+
 export default function App() {
   const [items, setItems] = useState(INIT_ITEMS)
   const [filter, setFilter] = useState('All')
@@ -145,46 +160,83 @@ export default function App() {
   }
 
   function exportExcel() {
-    const wsData = [
-      ['BLACK LION KITCHEN — INVENTORY LIST'],
-      ['Date: ' + new Date().toLocaleString()],
-      [],
-      ['Item', 'Category', 'Qty', 'Unit', 'Min Stock', 'Status', 'Notes']
-    ]
+    const wb = XLSX.utils.book_new()
+    const wsData = []
+
+    const hStyle = (bg) => ({ s: { fill: { fgColor: { rgb: bg } }, font: { bold: true, color: { rgb: 'FFFFFF' } }, alignment: { horizontal: 'center' } } })
+    const cStyle = (bg) => ({ s: { fill: { fgColor: { rgb: bg } }, font: { bold: true } } })
+    const dStyle = (bg) => ({ s: { fill: { fgColor: { rgb: bg } }, alignment: { horizontal: 'center' } } })
+
+    wsData.push([
+      { v: 'BLACK LION KITCHEN — INVENTORY LIST', ...hStyle('1A1A1A') },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+    ])
+
+    wsData.push([
+      { v: 'Date: ' + new Date().toLocaleString(), ...hStyle('2E8B7A') },
+      { v: '', s: { fill: { fgColor: { rgb: '2E8B7A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '2E8B7A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '2E8B7A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '2E8B7A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '2E8B7A' } } } },
+      { v: '', s: { fill: { fgColor: { rgb: '2E8B7A' } } } },
+    ])
+
+    wsData.push([])
+
+    wsData.push(['Item','Category','Qty','Unit','Min','Status','Notes'].map(h => ({
+      v: h, ...hStyle('2E8B7A')
+    })))
 
     const cats = ['Proteins','Dairy','Produce','Grains','Sauces','Bakery']
     cats.forEach(cat => {
       const catItems = items.filter(i => i.cat === cat)
       if (catItems.length === 0) return
-      wsData.push([cat.toUpperCase(), '', '', '', '', '', ''])
-      catItems.forEach(item => {
+      const cc = catColors[cat]
+
+      wsData.push([
+        { v: cat.toUpperCase(), ...cStyle(cc) },
+        { v: '', s: { fill: { fgColor: { rgb: cc } } } },
+        { v: '', s: { fill: { fgColor: { rgb: cc } } } },
+        { v: '', s: { fill: { fgColor: { rgb: cc } } } },
+        { v: '', s: { fill: { fgColor: { rgb: cc } } } },
+        { v: '', s: { fill: { fgColor: { rgb: cc } } } },
+        { v: '', s: { fill: { fgColor: { rgb: cc } } } },
+      ])
+
+      catItems.forEach((item, idx) => {
+        const sc = statusColors[getStatus(item)]
+        const bg = idx % 2 === 0 ? 'FFFFFF' : 'F5F5F5'
         wsData.push([
-          item.name,
-          item.cat,
-          item.qty,
-          item.unit,
-          item.threshold,
-          getStatus(item).toUpperCase(),
-          item.notes || ''
+          { v: item.name, s: { fill: { fgColor: { rgb: bg } } } },
+          { v: item.cat, s: { fill: { fgColor: { rgb: bg } } } },
+          { v: item.qty, ...dStyle(bg) },
+          { v: item.unit, ...dStyle(bg) },
+          { v: item.threshold, ...dStyle(bg) },
+          { v: getStatus(item).toUpperCase(), s: { fill: { fgColor: { rgb: sc.bg } }, font: { bold: true, color: { rgb: sc.font } }, alignment: { horizontal: 'center' } } },
+          { v: item.notes || '', s: { fill: { fgColor: { rgb: bg } } } },
         ])
       })
       wsData.push([])
     })
 
     wsData.push([
-      'TOTAL: ' + items.length, '',
-      'IN STOCK: ' + items.filter(i => getStatus(i) === 'ok').length, '',
-      'LOW: ' + items.filter(i => getStatus(i) === 'low').length, '',
-      'OUT: ' + items.filter(i => getStatus(i) === 'out').length
+      { v: 'TOTAL: ' + items.length, s: { fill: { fgColor: { rgb: '1A1A1A' } }, font: { bold: true, color: { rgb: 'FFFFFF' } }, alignment: { horizontal: 'center' } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: 'IN STOCK: ' + ok, s: { fill: { fgColor: { rgb: '1A1A1A' } }, font: { bold: true, color: { rgb: '4CAF50' } }, alignment: { horizontal: 'center' } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: 'LOW: ' + low, s: { fill: { fgColor: { rgb: '1A1A1A' } }, font: { bold: true, color: { rgb: 'FF9800' } }, alignment: { horizontal: 'center' } } },
+      { v: '', s: { fill: { fgColor: { rgb: '1A1A1A' } } } },
+      { v: 'OUT: ' + out, s: { fill: { fgColor: { rgb: '1A1A1A' } }, font: { bold: true, color: { rgb: 'F44336' } }, alignment: { horizontal: 'center' } } },
     ])
 
     const ws = XLSX.utils.aoa_to_sheet(wsData)
-    ws['!cols'] = [
-      { wch: 25 }, { wch: 15 }, { wch: 8 },
-      { wch: 12 }, { wch: 10 }, { wch: 10 }, { wch: 30 }
-    ]
-
-    const wb = XLSX.utils.book_new()
+    ws['!cols'] = [{ wch: 25 }, { wch: 15 }, { wch: 8 }, { wch: 12 }, { wch: 8 }, { wch: 10 }, { wch: 30 }]
     XLSX.utils.book_append_sheet(wb, ws, 'Inventory')
     XLSX.writeFile(wb, 'BlackLion-Inventory-' + new Date().toISOString().slice(0,10) + '.xlsx')
   }
