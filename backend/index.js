@@ -10,70 +10,69 @@ const PORT = 3001
 app.use(cors())
 app.use(express.json())
 
-// Desktop path
 const EXCEL_FILE = path.join(__dirname, 'BlackLion-Inventory.xlsx')
+
 async function saveToExcel(timestamp, items) {
   const workbook = new ExcelJS.Workbook()
   let worksheet
 
-  // Try to load existing file, otherwise create new
   try {
     await workbook.xlsx.readFile(EXCEL_FILE)
     worksheet = workbook.getWorksheet('Inventory')
+    if (!worksheet) {
+      worksheet = workbook.addWorksheet('Inventory')
+      addHeaders(worksheet)
+    }
   } catch {
     worksheet = workbook.addWorksheet('Inventory')
-
-    // Add headers with styling
-    worksheet.columns = [
-      { header: 'Timestamp', key: 'timestamp', width: 20 },
-      { header: 'Item', key: 'name', width: 25 },
-      { header: 'Category', key: 'cat', width: 15 },
-      { header: 'Qty', key: 'qty', width: 10 },
-      { header: 'Unit', key: 'unit', width: 10 },
-      { header: 'Status', key: 'status', width: 10 },
-      { header: 'Notes', key: 'notes', width: 30 },
-    ]
-
-    // Style the header row
-    worksheet.getRow(1).eachCell(cell => {
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2E8B7A' } }
-      cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 12 }
-      cell.alignment = { vertical: 'middle', horizontal: 'center' }
-    })
-    worksheet.getRow(1).height = 25
+    addHeaders(worksheet)
   }
 
-  // Add data rows
-  items.forEach((item, index) => {
-    const row = worksheet.addRow({
+  items.forEach(item => {
+    const row = worksheet.addRow([
       timestamp,
-      name: item.name,
-      cat: item.cat,
-      qty: item.qty,
-      unit: item.unit,
-      status: item.status,
-      notes: item.notes || ''
-    })
+      item.name,
+      item.cat,
+      item.qty,
+      item.unit,
+      item.status,
+      item.notes || ''
+    ])
 
-    // Color rows by status
     const rowColor = item.status === 'out' ? 'FFEBEE' : item.status === 'low' ? 'FFF8E1' : 'FFFFFF'
     row.eachCell(cell => {
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: rowColor } }
       cell.alignment = { vertical: 'middle' }
     })
 
-    // Color status cell
-    const statusCell = row.getCell('status')
+    const statusCell = row.getCell(6)
     statusCell.font = {
       bold: true,
       color: { argb: item.status === 'out' ? 'C62828' : item.status === 'low' ? 'F57C00' : '2E7D32' }
     }
   })
 
-  // Add empty row between check-ins
-  worksheet.addRow({})
-
+  worksheet.addRow([])
   await workbook.xlsx.writeFile(EXCEL_FILE)
+}
+
+function addHeaders(worksheet) {
+  worksheet.columns = [
+    { header: 'Timestamp', key: 'timestamp', width: 20 },
+    { header: 'Item', key: 'name', width: 25 },
+    { header: 'Category', key: 'cat', width: 15 },
+    { header: 'Qty', key: 'qty', width: 10 },
+    { header: 'Unit', key: 'unit', width: 10 },
+    { header: 'Status', key: 'status', width: 10 },
+    { header: 'Notes', key: 'notes', width: 30 },
+  ]
+
+  worksheet.getRow(1).eachCell(cell => {
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2E8B7A' } }
+    cell.font = { bold: true, color: { argb: 'FFFFFF' }, size: 12 }
+    cell.alignment = { vertical: 'middle', horizontal: 'center' }
+  })
+  worksheet.getRow(1).height = 25
 }
 
 app.get('/', (req, res) => {
@@ -88,11 +87,9 @@ app.post('/checkin', async (req, res) => {
   }
 
   try {
-    // Save to Excel
     await saveToExcel(timestamp, items)
-    console.log('Saved to Excel:', EXCEL_FILE)
+    console.log('Saved to Excel successfully')
 
-    // Also send to Google Sheets
     try {
       await fetch(process.env.APPS_SCRIPT_URL, {
         method: 'POST',
@@ -105,11 +102,19 @@ app.post('/checkin', async (req, res) => {
       console.log('Google Sheets skipped:', err.message)
     }
 
-    res.json({ success: true, message: 'Check-in saved to Excel and Google Sheets!' })
+    res.json({ success: true, message: 'Check-in saved!' })
 
   } catch (err) {
-    console.error('Excel error:', err.message)
+    console.error('Error:', err.message)
     res.status(500).json({ error: 'Failed to save: ' + err.message })
+  }
+})
+
+app.get('/download', async (req, res) => {
+  try {
+    res.download(EXCEL_FILE, 'BlackLion-Inventory.xlsx')
+  } catch (err) {
+    res.status(404).json({ error: 'No file yet — submit a check-in first!' })
   }
 })
 

@@ -232,9 +232,8 @@ const [search, setSearch] = useState('')
       <div className="actions">
         <button className="btn primary" onClick={submitCheckin} disabled={loading}>
           {loading ? 'Saving...' : 'Submit Check-in'}
-        </button>
         <button className="btn secondary" onClick={exportCSV}>Export CSV</button>
-      </div>
+<button className="btn secondary" onClick={() => window.open('https://black-lion-kitchen-inventory-lists.onrender.com/download')}>Download Excel</button>
 
       {toast && <div className="toast">{toast}</div>}
     </div>
