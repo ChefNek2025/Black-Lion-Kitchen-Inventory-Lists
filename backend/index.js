@@ -32,9 +32,8 @@ async function saveToExcel(timestamp, items) {
   workbook.creator = 'Black Lion Kitchen'
   workbook.created = new Date()
 
-  const worksheet = workbook.addWorksheet('Inventory', {
-    views: [{ state: 'frozen', ySplit: 3 }]
-  })
+  const worksheet = workbook.addWorksheet('Inventory')
+  
 
   // Title row
   worksheet.mergeCells('A1:G1')
