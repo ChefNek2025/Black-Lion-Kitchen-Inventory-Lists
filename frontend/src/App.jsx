@@ -25,14 +25,12 @@ const INIT_ITEMS = [
   { id:20, name:'Cream Cheese', cat:'Dairy', qty:24, threshold:5, unit:'ct', notes:'' },
   { id:21, name:'Butter', cat:'Dairy', qty:24, threshold:5, unit:'ct', notes:'' },
   { id:22, name:'Romaine Lettuce', cat:'Produce', qty:6, threshold:2, unit:'heads', notes:'' },
-  { id:23, name:'Mixed Lettuce', cat:'Produce', qty:0, threshold:2, unit:'bags', notes:'' },
   { id:24, name:'Spinach', cat:'Produce', qty:4, threshold:2, unit:'bags', notes:'' },
   { id:25, name:'Tomatoes', cat:'Produce', qty:12, threshold:3, unit:'ct', notes:'' },
   { id:26, name:'Cherry Tomatoes', cat:'Produce', qty:4, threshold:1, unit:'pints', notes:'' },
   { id:27, name:'Cucumber', cat:'Produce', qty:4, threshold:1, unit:'ct', notes:'' },
   { id:28, name:'Onion', cat:'Produce', qty:12, threshold:3, unit:'ct', notes:'' },
   { id:29, name:'Bell Peppers', cat:'Produce', qty:4, threshold:1, unit:'bags', notes:'' },
-  { id:30, name:'Mushrooms', cat:'Produce', qty:0, threshold:2, unit:'lbs', notes:'' },
   { id:31, name:'Shredded Carrots', cat:'Produce', qty:2, threshold:1, unit:'bags', notes:'' },
   { id:32, name:'Red Cabbage', cat:'Produce', qty:2, threshold:1, unit:'heads', notes:'' },
   { id:33, name:'Green Cabbage', cat:'Produce', qty:0, threshold:1, unit:'heads', notes:'' },
@@ -78,6 +76,15 @@ const INIT_ITEMS = [
   { id:73, name:'Hash Browns', cat:'Bakery', qty:6, threshold:5, unit:'boxes', notes:'' },
   { id:74, name:'French Fries', cat:'Bakery', qty:30, threshold:6, unit:'lbs', notes:'' },
   { id:75, name:'Pancake Mix', cat:'Bakery', qty:6, threshold:2, unit:'bags', notes:'' },
+  { id:76, name:'Fry Oil', cat:'Pantry', qty:3, threshold:1, unit:'boxes', notes:'' },
+  { id:77, name:'Oven Cleaner', cat:'Pantry', qty:4, threshold:1, unit:'bottles', notes:'' },
+  { id:78, name:'Bricks ', cat:'Pantry', qty:8, threshold:2, unit:'containers', notes:'' },
+  { id:79, name:'Gloves', cat:'Pantry', qty:10, threshold:4, unit:'boxes', notes:'' },
+  { id:80, name:'Plastic Foil', cat:'Pantry', qty:2, threshold:1, unit:'rolls', notes:'' },
+  { id:81, name:'To Go Boxes', cat:'Pantry', qty:2, threshold:1, unit:'boxes', notes:'' },
+  { id:82, name:'Ketchup cups', cat:'Pantry', qty:10, threshold:2, unit:'rolls', notes:'' },
+  { id:83, name:'Ketchup lids ', cat:'Pantry', qty:10, threshold:2, unit:'boxes', notes:'' },
+  {id:84, name:'Lighters', cat:'Pantry', qty:3, threshold:1, unit:'boxes', notes:'' },
 ]
 
 const CATS = ['All','Proteins','Dairy','Produce','Grains','Sauces','Bakery']
@@ -95,6 +102,7 @@ const catColors = {
   'Grains':   'FFF8E1',
   'Sauces':   'F3E5F5',
   'Bakery':   'FBE9E7',
+  'Pantry':   'E0F7FA',
 }
 
 const statusColors = {
